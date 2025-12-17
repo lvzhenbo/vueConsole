@@ -221,6 +221,13 @@ interface VueConsoleOptions {
 }
 ```
 
+### 安全说明
+
+⚠️ **注意**：日志面板的命令行功能使用了 `eval()` 来执行 JavaScript 代码。这是调试工具的预期功能（类似浏览器控制台），但在生产环境中请确保：
+1. 只在开发/测试环境启用 VueConsole
+2. 不要让最终用户访问到调试面板
+3. 构建生产版本时移除或禁用 VueConsole
+
 ## 🤝 贡献指南
 
 欢迎提交 Issue 和 Pull Request！
