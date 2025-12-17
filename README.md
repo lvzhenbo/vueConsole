@@ -130,7 +130,7 @@ app.mount('#app')
 
 ```
 vueConsole/
-├── src/
+├── src/                 # 库源代码
 │   ├── components/       # Vue 组件
 │   │   ├── VueConsole.vue   # 主组件
 │   │   └── TreeNode.vue     # DOM 树节点组件
@@ -147,8 +147,9 @@ vueConsole/
 │   │   └── index.ts
 │   ├── utils/           # 工具函数
 │   │   └── index.ts
-│   ├── index.ts         # 入口文件
-│   ├── App.vue          # 演示应用
+│   └── index.ts         # 库入口文件
+├── examples/            # 示例应用
+│   ├── App.vue          # 演示应用组件
 │   └── main.ts          # 演示应用入口
 ├── dist/                # 构建输出
 ├── index.html           # 演示页面
@@ -179,8 +180,24 @@ interface VueConsoleOptions {
   defaultPlugins?: string[]             // 默认插件列表
   maxLogNumber?: number                 // 最大日志数量，默认 1000
   disableLogScrolling?: boolean         // 禁用日志自动滚动
-  target?: HTMLElement | string         // 挂载目标元素
+  target?: HTMLElement | string         // 挂载目标元素，默认 document.body
 }
+```
+
+### 在嵌入页面（iframe）中使用
+
+当在 iframe 或其他嵌入式环境中使用 VueConsole 时，可以通过 `target` 选项指定挂载容器：
+
+```typescript
+// 使用选择器字符串
+new VConsole({
+  target: '#my-container'
+})
+
+// 或使用 DOM 元素
+new VConsole({
+  target: document.getElementById('my-container')
+})
 ```
 
 ## ✅ 特性对比

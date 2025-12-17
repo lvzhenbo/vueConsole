@@ -23,15 +23,39 @@ export class VConsole {
     this.init()
   }
 
+  // 获取目标挂载元素
+  private getTargetElement(): HTMLElement {
+    const { target } = this.options
+    
+    if (!target) {
+      return document.body
+    }
+    
+    if (typeof target === 'string') {
+      const element = document.querySelector(target)
+      if (element instanceof HTMLElement) {
+        return element
+      }
+      console.warn(`VueConsole: target element "${target}" not found, falling back to document.body`)
+      return document.body
+    }
+    
+    return target
+  }
+
   private init() {
+    // 获取目标挂载元素
+    const targetElement = this.getTargetElement()
+    
     // 创建容器
     this.container = document.createElement('div')
     this.container.id = 'vue-console-container'
-    document.body.appendChild(this.container)
+    targetElement.appendChild(this.container)
 
     // 创建Vue应用
     this.app = createApp(VueConsole, {
-      defaultTheme: this.options.theme
+      defaultTheme: this.options.theme,
+      target: targetElement
     })
 
     // 挂载
