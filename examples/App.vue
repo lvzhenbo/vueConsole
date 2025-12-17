@@ -26,6 +26,11 @@
         <button @click="testError">错误日志</button>
         <button @click="testMultiple">多参数日志</button>
         <button @click="testObject">对象日志</button>
+        <button @click="testNestedObject">嵌套对象</button>
+        <button @click="testLargeArray">大数组</button>
+        <button @click="testCircular">循环引用</button>
+        <button @click="testSpecialTypes">特殊类型</button>
+        <button @click="testComplexData">复杂数据</button>
       </div>
     </div>
 
@@ -104,6 +109,115 @@ function testObject() {
   console.log('复杂对象:', obj)
 }
 
+// 嵌套对象测试
+function testNestedObject() {
+  const nested = {
+    level1: {
+      level2: {
+        level3: {
+          level4: {
+            level5: {
+              message: '这是深层嵌套的数据',
+              array: [1, 2, 3, { a: 1, b: 2 }]
+            }
+          },
+          sibling: '同级数据'
+        }
+      },
+      otherData: ['数组', '数据']
+    }
+  }
+  console.log('深层嵌套对象:', nested)
+}
+
+// 大数组测试
+function testLargeArray() {
+  const largeArray = Array.from({ length: 200 }, (_, i) => ({
+    id: i,
+    name: `Item ${i}`,
+    value: Math.random()
+  }))
+  console.log('大数组 (200项):', largeArray)
+}
+
+// 循环引用测试
+function testCircular() {
+  const obj: any = { name: '循环引用对象' }
+  obj.self = obj
+  obj.nested = { parent: obj }
+  console.log('循环引用对象:', obj)
+}
+
+// 特殊类型测试
+function testSpecialTypes() {
+  const map = new Map<unknown, unknown>([
+    ['key1', 'value1'],
+    ['key2', { nested: true }],
+    [{ objKey: 1 }, 'object as key']
+  ])
+  
+  const set = new Set([1, 2, 3, { a: 1 }, [1, 2, 3]])
+  
+  const date = new Date()
+  const regexp = /test\d+/gi
+  const error = new Error('测试错误')
+  const symbol = Symbol('testSymbol')
+  const bigint = BigInt(9007199254740991)
+  
+  const func = function namedFunction(a: number, b: string) {
+    return a + b
+  }
+  
+  const arrowFunc = (x: number) => x * 2
+  
+  console.log('Map:', map)
+  console.log('Set:', set)
+  console.log('Date:', date)
+  console.log('RegExp:', regexp)
+  console.log('Error:', error)
+  console.log('Symbol:', symbol)
+  console.log('BigInt:', bigint)
+  console.log('Function:', func)
+  console.log('Arrow Function:', arrowFunc)
+}
+
+// 复杂数据测试
+function testComplexData() {
+  const complexData = {
+    user: {
+      id: 12345,
+      name: '测试用户',
+      email: 'test@example.com',
+      profile: {
+        avatar: 'https://example.com/avatar.png',
+        bio: '这是一段很长的个人简介，用于测试长文本的显示效果...',
+        social: {
+          github: 'https://github.com/test',
+          twitter: '@test',
+          website: null
+        }
+      },
+      roles: ['admin', 'user', 'editor'],
+      settings: {
+        theme: 'dark',
+        notifications: true,
+        language: 'zh-CN'
+      }
+    },
+    posts: [
+      { id: 1, title: '第一篇文章', content: '内容...', likes: 100 },
+      { id: 2, title: '第二篇文章', content: '内容...', likes: 50 },
+      { id: 3, title: '第三篇文章', content: '内容...', likes: 200 }
+    ],
+    metadata: {
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      version: '1.0.0'
+    }
+  }
+  console.log('复杂数据结构:', complexData)
+}
+
 // 网络测试
 async function testFetch() {
   try {
@@ -175,7 +289,7 @@ function clearStorage() {
   localStorage.clear()
   sessionStorage.clear()
   document.cookie.split(';').forEach(cookie => {
-    const name = cookie.split('=')[0].trim()
+    const name = cookie.split('=')[0]?.trim() ?? ''
     document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`
   })
   console.log('已清空所有存储')
@@ -200,7 +314,7 @@ function removeElement() {
   const elements = container?.getElementsByClassName('test-element')
   if (elements && elements.length > 0) {
     const lastElement = elements[elements.length - 1]
-    lastElement.remove()
+    lastElement?.remove()
     console.log('已删除元素')
   } else {
     console.warn('没有可删除的元素')

@@ -18,12 +18,39 @@ const originalConsole = {
   debug: console.debug
 }
 
+// 安全序列化，处理循环引用
+function safeStringify(obj: any): string {
+  const seen = new WeakSet()
+  return JSON.stringify(obj, (_key, value) => {
+    if (typeof value === 'object' && value !== null) {
+      if (seen.has(value)) {
+        return '[Circular]'
+      }
+      seen.add(value)
+    }
+    // 处理特殊对象
+    if (value instanceof Error) {
+      return { name: value.name, message: value.message, stack: value.stack }
+    }
+    if (typeof value === 'function') {
+      return `[Function: ${value.name || 'anonymous'}]`
+    }
+    if (value === window) {
+      return '[Window]'
+    }
+    if (value instanceof HTMLElement) {
+      return `[HTMLElement: ${value.tagName}]`
+    }
+    return value
+  })
+}
+
 // 添加日志
 export function addLog(type: LogType, args: any[]) {
   const lastLog = logList.value[logList.value.length - 1]
   
   // 检查是否是重复日志
-  if (lastLog && lastLog.type === type && JSON.stringify(lastLog.content) === JSON.stringify(args)) {
+  if (lastLog && lastLog.type === type && safeStringify(lastLog.content) === safeStringify(args)) {
     lastLog.repeated++
     return
   }

@@ -3,3 +3,11 @@ declare module '*.vue' {
   const component: DefineComponent<{}, {}, any>
   export default component
 }
+
+declare module '*.ce.vue' {
+  import { DefineComponent } from 'vue'
+  const component: DefineComponent<{}, {}, any> & {
+    styles?: string[]
+  }
+  export default component
+}

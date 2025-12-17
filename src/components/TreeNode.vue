@@ -69,73 +69,15 @@ function handleClick() {
 </script>
 
 <style scoped>
-.tree-node {
-  user-select: none;
-}
-
-.tree-node__content {
-  display: flex;
-  align-items: center;
-  padding: 4px 8px;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: background 0.2s;
-}
-
-.tree-node__content:hover {
-  background: var(--hover-color);
-}
-
-.tree-node__toggle {
-  width: 16px;
-  margin-right: 4px;
-  color: #999;
-  font-size: 10px;
-  flex-shrink: 0;
-}
-
-.tree-node__toggle--empty {
-  opacity: 0.3;
-}
-
-.tree-node__tag {
-  color: #881280;
-  font-weight: bold;
-}
-
-.tree-node__id {
-  color: #1c00cf;
-  margin-left: 4px;
-}
-
-.tree-node__class {
-  color: #994500;
-  margin-left: 4px;
-}
-
-.tree-node__text {
-  color: #000;
-  margin-left: 8px;
-  opacity: 0.7;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* 深色主题 */
-:deep(.vue-console--dark) .tree-node__tag {
-  color: #e676d8;
-}
-
-:deep(.vue-console--dark) .tree-node__id {
-  color: #9cdcfe;
-}
-
-:deep(.vue-console--dark) .tree-node__class {
-  color: #dcdcaa;
-}
-
-:deep(.vue-console--dark) .tree-node__text {
-  color: #d4d4d4;
-}
+.tree-node__content { display: flex; align-items: center; padding: 3px 6px; border-radius: 3px; }
+.tree-node__toggle { width: 14px; margin-right: 3px; color: #999; font-size: 10px; flex-shrink: 0; }
+.tree-node__toggle--empty { opacity: .3; }
+.tree-node__tag { color: #881280; font-weight: bold; }
+.tree-node__id { color: #1c00cf; margin-left: 3px; }
+.tree-node__class { color: #994500; margin-left: 3px; }
+.tree-node__text { color: #000; margin-left: 6px; opacity: .7; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+:deep(.vue-console--dark) .tree-node__tag { color: #e676d8; }
+:deep(.vue-console--dark) .tree-node__id { color: #9cdcfe; }
+:deep(.vue-console--dark) .tree-node__class { color: #dcdcaa; }
+:deep(.vue-console--dark) .tree-node__text { color: #d4d4d4; }
 </style>

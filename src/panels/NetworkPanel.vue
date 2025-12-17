@@ -4,14 +4,9 @@
       <div v-if="networkList.length === 0" class="network-panel__empty">
         暂无网络请求
       </div>
-      
-      <div
-        v-for="item in networkList"
-        :key="item.id"
-        class="network-item"
-        :class="`network-item--${item.readyState}`"
-        @click="selectItem(item)"
-      >
+
+      <div v-for="item in networkList" :key="item.id" class="network-item" :class="`network-item--${item.readyState}`"
+        @click="selectItem(item)">
         <div class="network-item__header">
           <span class="network-item__method" :class="`network-item__method--${item.method.toLowerCase()}`">
             {{ item.method }}
@@ -37,7 +32,7 @@
           <h3>请求详情</h3>
           <button @click="closeDetail">✕</button>
         </div>
-        
+
         <div class="network-detail__body">
           <div class="network-detail__section">
             <h4>基本信息</h4>
@@ -111,7 +106,7 @@ function closeDetail() {
 
 function formatRequestData(data: any): string {
   if (!data) return '无'
-  
+
   if (typeof data === 'string') {
     try {
       return formatJson(JSON.parse(data))
@@ -119,13 +114,13 @@ function formatRequestData(data: any): string {
       return data
     }
   }
-  
+
   return formatJson(data)
 }
 
 function formatResponseData(data: any): string {
   if (!data) return '无'
-  
+
   if (typeof data === 'string') {
     try {
       return formatJson(JSON.parse(data))
@@ -133,7 +128,7 @@ function formatResponseData(data: any): string {
       return data.length > 1000 ? data.substring(0, 1000) + '...' : data
     }
   }
-  
+
   return formatJson(data)
 }
 </script>
@@ -142,28 +137,21 @@ function formatResponseData(data: any): string {
 .network-panel {
   height: 100%;
   overflow-y: auto;
-  padding: 8px;
-  -webkit-overflow-scrolling: touch;
+  padding: 6px;
 }
 
 .network-panel__empty {
-  padding: 40px 20px;
+  padding: 40px 16px;
   text-align: center;
   color: #999;
 }
 
 .network-item {
-  margin-bottom: 8px;
-  padding: 12px;
+  margin-bottom: 6px;
+  padding: 10px;
   border-radius: 4px;
-  background: var(--bg-color);
+  background: var(--vc-bg);
   border-left: 3px solid #ccc;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.network-item:hover {
-  background: var(--hover-color);
 }
 
 .network-item--pending {
@@ -181,24 +169,27 @@ function formatResponseData(data: any): string {
 .network-item__header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 6px;
+  gap: 6px;
+  margin-bottom: 4px;
 }
 
-.network-item__method {
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 11px;
+.network-item__method,
+.network-item__status {
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px;
   font-weight: bold;
-  color: white;
+  color: #fff;
   background: #666;
 }
 
-.network-item__method--get {
+.network-item__method--get,
+.network-item__status--success {
   background: #52c41a;
 }
 
-.network-item__method--post {
+.network-item__method--post,
+.network-item__status--redirect {
   background: #1890ff;
 }
 
@@ -206,140 +197,110 @@ function formatResponseData(data: any): string {
   background: #faad14;
 }
 
-.network-item__method--delete {
-  background: #f5222d;
-}
-
-.network-item__url {
-  flex: 1;
-  font-family: 'Courier New', monospace;
-  font-size: 13px;
-  color: var(--text-color);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.network-item__status {
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: bold;
-  color: white;
-  background: #666;
-}
-
-.network-item__status--success {
-  background: #52c41a;
-}
-
-.network-item__status--redirect {
-  background: #1890ff;
-}
-
+.network-item__method--delete,
 .network-item__status--client-error,
 .network-item__status--server-error {
   background: #f5222d;
 }
 
+.network-item__url {
+  flex: 1;
+  font-family: monospace;
+  font-size: 12px;
+  color: var(--vc-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .network-item__info {
   display: flex;
-  gap: 16px;
-  font-size: 12px;
+  gap: 12px;
+  font-size: 11px;
   color: #999;
 }
 
-.network-item__time {
-  font-family: 'Courier New', monospace;
+.network-item__time,
+.network-item__duration {
+  font-family: monospace;
 }
 
 .network-item__duration {
-  font-family: 'Courier New', monospace;
-  color: var(--primary-color);
+  color: var(--vc-primary);
 }
 
 .network-detail {
   position: fixed;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  inset: 0;
+  background: rgba(0, 0, 0, .5);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 16px;
   z-index: 100;
 }
 
 .network-detail__content {
-  background: var(--bg-color);
+  background: var(--vc-bg);
   border-radius: 8px;
-  max-width: 90%;
+  width: 100%;
   max-height: 90%;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .network-detail__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px;
-  border-bottom: 1px solid var(--border-color);
+  padding: 12px;
+  border-bottom: 1px solid var(--vc-border);
 }
 
 .network-detail__header h3 {
   margin: 0;
-  font-size: 16px;
-  color: var(--text-color);
+  font-size: 15px;
+  color: var(--vc-text);
 }
 
 .network-detail__header button {
   border: none;
   background: transparent;
   font-size: 20px;
-  cursor: pointer;
-  color: var(--text-color);
-  padding: 4px 8px;
+  color: var(--vc-text);
+  padding: 4px;
 }
 
 .network-detail__body {
   overflow-y: auto;
-  padding: 16px;
-  -webkit-overflow-scrolling: touch;
+  padding: 12px;
 }
 
 .network-detail__section {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .network-detail__section h4 {
-  margin: 0 0 8px 0;
-  font-size: 14px;
-  color: var(--primary-color);
+  margin: 0 0 6px;
+  font-size: 13px;
+  color: var(--vc-primary);
 }
 
 .network-detail__info {
-  font-size: 13px;
-  line-height: 1.8;
-}
-
-.network-detail__info div {
-  margin-bottom: 4px;
+  font-size: 12px;
+  line-height: 1.6;
 }
 
 .network-detail__pre {
-  background: var(--log-bg);
-  padding: 12px;
+  background: var(--vc-log-bg);
+  padding: 10px;
   border-radius: 4px;
-  font-size: 12px;
-  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  font-family: monospace;
   overflow-x: auto;
   margin: 0;
   white-space: pre-wrap;
   word-break: break-all;
-  color: var(--text-color);
+  color: var(--vc-text);
 }
 </style>

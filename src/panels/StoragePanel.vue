@@ -1,13 +1,8 @@
 <template>
   <div class="storage-panel">
     <div class="storage-panel__tabs">
-      <button
-        v-for="tab in tabs"
-        :key="tab"
-        class="storage-panel__tab"
-        :class="{ 'storage-panel__tab--active': activeTab === tab }"
-        @click="activeTab = tab"
-      >
+      <button v-for="tab in tabs" :key="tab" class="storage-panel__tab"
+        :class="{ 'storage-panel__tab--active': activeTab === tab }" @click="activeTab = tab">
         {{ tab }}
       </button>
     </div>
@@ -148,7 +143,7 @@ function clearAll() {
       }
       break
   }
-  
+
   refresh()
 }
 
@@ -172,42 +167,39 @@ onMounted(() => {
 
 .storage-panel__tabs {
   display: flex;
-  border-bottom: 1px solid var(--border-color);
-  background: var(--bg-color);
+  border-bottom: 1px solid var(--vc-border);
+  background: var(--vc-bg);
 }
 
 .storage-panel__tab {
-  padding: 12px 16px;
+  padding: 10px 14px;
   border: none;
   background: transparent;
-  cursor: pointer;
-  color: var(--text-color);
-  opacity: 0.6;
+  color: var(--vc-text);
+  opacity: .6;
   border-bottom: 2px solid transparent;
-  transition: all 0.3s;
 }
 
 .storage-panel__tab--active {
   opacity: 1;
-  border-bottom-color: var(--primary-color);
+  border-bottom-color: var(--vc-primary);
   font-weight: bold;
 }
 
 .storage-panel__content {
   flex: 1;
   overflow-y: auto;
-  padding: 8px;
-  -webkit-overflow-scrolling: touch;
+  padding: 6px;
 }
 
 .storage-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .storage-empty {
-  padding: 40px 20px;
+  padding: 40px 16px;
   text-align: center;
   color: #999;
 }
@@ -215,66 +207,61 @@ onMounted(() => {
 .storage-item {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
-  padding: 12px;
-  background: var(--bg-color);
+  gap: 6px;
+  padding: 10px;
+  background: var(--vc-bg);
   border-radius: 4px;
-  border-left: 3px solid var(--primary-color);
+  border-left: 3px solid var(--vc-primary);
+}
+
+.storage-item__key,
+.storage-item__value {
+  font-family: monospace;
+  font-size: 11px;
+  word-break: break-all;
 }
 
 .storage-item__key {
   font-weight: bold;
-  color: var(--text-color);
-  min-width: 100px;
-  word-break: break-all;
-  font-family: 'Courier New', monospace;
-  font-size: 12px;
+  color: var(--vc-text);
+  min-width: 80px;
 }
 
 .storage-item__value {
   flex: 1;
-  color: var(--text-color);
-  opacity: 0.8;
-  word-break: break-all;
-  font-family: 'Courier New', monospace;
-  font-size: 12px;
+  color: var(--vc-text);
+  opacity: .8;
 }
 
 .storage-item__delete {
-  padding: 4px 8px;
+  padding: 3px 6px;
   border: 1px solid #f5222d;
   background: transparent;
   color: #f5222d;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 11px;
+  border-radius: 3px;
+  font-size: 10px;
   flex-shrink: 0;
 }
 
 .storage-item__delete:active {
   background: #f5222d;
-  color: white;
+  color: #fff;
 }
 
 .storage-panel__toolbar {
   display: flex;
-  gap: 8px;
-  padding: 8px;
-  border-top: 1px solid var(--border-color);
-  background: var(--bg-color);
+  gap: 6px;
+  padding: 6px;
+  border-top: 1px solid var(--vc-border);
+  background: var(--vc-bg);
 }
 
 .storage-panel__toolbar button {
-  padding: 6px 12px;
-  border: 1px solid var(--border-color);
-  background: var(--bg-color);
-  color: var(--text-color);
+  padding: 5px 10px;
+  border: 1px solid var(--vc-border);
+  background: var(--vc-bg);
+  color: var(--vc-text);
   border-radius: 4px;
-  cursor: pointer;
   font-size: 12px;
-}
-
-.storage-panel__toolbar button:hover {
-  background: var(--hover-color);
 }
 </style>

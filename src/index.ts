@@ -1,14 +1,78 @@
-// VueConsole 主入口文件
-import { createApp, App as VueApp } from 'vue'
-import VueConsole from './components/VueConsole.vue'
+// VueConsole 主入口文件 - 自定义元素版本
+import { defineCustomElement, type App as VueApp, type Component } from 'vue'
+import VueConsoleComponent from './components/VueConsole.vue'
+import LogPanel from './panels/LogPanel.vue'
+import NetworkPanel from './panels/NetworkPanel.vue'
+import ElementPanel from './panels/ElementPanel.vue'
+import StoragePanel from './panels/StoragePanel.vue'
+import SystemPanel from './panels/SystemPanel.vue'
+import LogTree from './components/LogTree.vue'
+import TreeNode from './components/TreeNode.vue'
 import type { VueConsoleOptions } from './types'
 
 export type { VueConsoleOptions } from './types'
 
-// VueConsole类
+// 收集所有组件的样式
+function collectStyles(components: Component[]): string[] {
+  const styles: string[] = []
+  for (const comp of components) {
+    if ((comp as any).styles) {
+      styles.push(...(comp as any).styles)
+    }
+  }
+  return styles
+}
+
+// 所有子组件列表（用于收集样式）
+const childComponents = [
+  LogPanel,
+  NetworkPanel,
+  ElementPanel,
+  StoragePanel,
+  SystemPanel,
+  LogTree,
+  TreeNode
+]
+
+// 创建带有合并样式的自定义元素
+function createVueConsoleElement() {
+  // 收集所有子组件样式
+  const allStyles = [
+    ...((VueConsoleComponent as any).styles || []),
+    ...collectStyles(childComponents)
+  ]
+
+  // 使用 defineCustomElement 并传入合并的样式
+  return defineCustomElement(VueConsoleComponent, {
+    styles: allStyles
+  })
+}
+
+// 自定义元素实例接口
+interface VueConsoleElementInstance extends HTMLElement {
+  _instance?: {
+    exposed?: {
+      show?: () => void
+      hide?: () => void
+      toggleTheme?: () => void
+      clearCurrentPanel?: () => void
+    }
+  }
+}
+
+// 定义自定义元素类（延迟创建）
+let VueConsoleElement: ReturnType<typeof createVueConsoleElement> | null = null
+
+function getVueConsoleElement() {
+  if (!VueConsoleElement) {
+    VueConsoleElement = createVueConsoleElement()
+  }
+  return VueConsoleElement
+}
+
+// VueConsole类 - 使用自定义元素实现
 export class VConsole {
-  private app: VueApp | null = null
-  private container: HTMLElement | null = null
+  private element: VueConsoleElementInstance | null = null
   private options: VueConsoleOptions
 
   constructor(options: VueConsoleOptions = {}) {
@@ -44,45 +108,52 @@ export class VConsole {
   }
 
   private init() {
+    const Element = getVueConsoleElement()
+    
+    // 注册自定义元素（如果尚未注册）
+    if (!customElements.get('vue-console')) {
+      customElements.define('vue-console', Element)
+    }
+
     // 获取目标挂载元素
     const targetElement = this.getTargetElement()
+
+    // 创建自定义元素实例
+    this.element = document.createElement('vue-console') as VueConsoleElementInstance
     
-    // 创建容器
-    this.container = document.createElement('div')
-    this.container.id = 'vue-console-container'
-    targetElement.appendChild(this.container)
-
-    // 创建Vue应用
-    this.app = createApp(VueConsole, {
-      defaultTheme: this.options.theme,
-      target: targetElement
-    })
-
-    // 挂载
-    this.app.mount(this.container)
+    // 设置属性
+    this.element.setAttribute('default-theme', this.options.theme || 'light')
+    
+    // 添加到 DOM
+    targetElement.appendChild(this.element)
   }
 
   // 显示控制台
   public show() {
-    // 通过事件或其他方式触发显示
-    console.log('VueConsole: show')
+    if (this.element?._instance?.exposed?.show) {
+      this.element._instance.exposed.show()
+    }
   }
 
   // 隐藏控制台
   public hide() {
-    console.log('VueConsole: hide')
+    if (this.element?._instance?.exposed?.hide) {
+      this.element._instance.exposed.hide()
+    }
+  }
+
+  // 切换主题
+  public toggleTheme() {
+    if (this.element?._instance?.exposed?.toggleTheme) {
+      this.element._instance.exposed.toggleTheme()
+    }
   }
 
   // 销毁控制台
   public destroy() {
-    if (this.app) {
-      this.app.unmount()
-      this.app = null
-    }
-
-    if (this.container && this.container.parentNode) {
-      this.container.parentNode.removeChild(this.container)
-      this.container = null
+    if (this.element && this.element.parentNode) {
+      this.element.parentNode.removeChild(this.element)
+      this.element = null
     }
   }
 }
@@ -92,12 +163,21 @@ export default VConsole
 
 // Vue插件安装方法
 export const install = (app: VueApp, options: VueConsoleOptions = {}) => {
-  // 创建VueConsole实例
   const vConsole = new VConsole(options)
-  
-  // 将实例添加到app的全局属性
   app.config.globalProperties.$vConsole = vConsole
 }
 
 // 导出组件
-export { VueConsole }
+export { VueConsoleComponent as VueConsole }
+
+// 导出自定义元素类
+export { getVueConsoleElement as createVueConsoleElement }
+
+// 注册自定义元素的便捷函数
+export function register(tagName = 'vue-console') {
+  const Element = getVueConsoleElement()
+  if (!customElements.get(tagName)) {
+    customElements.define(tagName, Element)
+  }
+  return Element
+}

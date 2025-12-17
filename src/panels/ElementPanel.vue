@@ -5,16 +5,10 @@
       <button @click="expandAll">展开全部</button>
       <button @click="collapseAll">收起全部</button>
     </div>
-    
+
     <div class="element-panel__tree">
-      <TreeNode
-        v-if="rootNode"
-        :node="rootNode"
-        :level="0"
-        :expanded-nodes="expandedNodes"
-        @toggle="toggleNode"
-        @select="selectNode"
-      />
+      <TreeNode v-if="rootNode" :node="rootNode" :level="0" :expanded-nodes="expandedNodes" @toggle="toggleNode"
+        @select="selectNode" />
     </div>
 
     <!-- 元素详情 -->
@@ -81,12 +75,13 @@ function buildDomTree(element: Element): DomNode | null {
     return null
   }
 
+  const firstChild = element.childNodes[0]
   const node: DomNode = {
     tagName: element.tagName.toLowerCase(),
     id: element.id,
     className: element.className,
-    textContent: element.childNodes.length === 1 && element.childNodes[0].nodeType === 3 
-      ? element.childNodes[0].textContent || '' 
+    textContent: element.childNodes.length === 1 && firstChild?.nodeType === 3
+      ? firstChild?.textContent || ''
       : '',
     attributes: {},
     children: [],
@@ -96,14 +91,16 @@ function buildDomTree(element: Element): DomNode | null {
   // 获取属性
   for (let i = 0; i < element.attributes.length; i++) {
     const attr = element.attributes[i]
-    if (attr.name !== 'id' && attr.name !== 'class') {
+    if (attr && attr.name !== 'id' && attr.name !== 'class') {
       node.attributes[attr.name] = attr.value
     }
   }
 
   // 递归构建子节点
   for (let i = 0; i < element.children.length; i++) {
-    const child = buildDomTree(element.children[i])
+    const childElement = element.children[i]
+    if (!childElement) continue
+    const child = buildDomTree(childElement)
     if (child) {
       node.children.push(child)
     }
@@ -168,32 +165,26 @@ onMounted(() => {
 
 .element-panel__toolbar {
   display: flex;
-  gap: 8px;
-  padding: 8px;
-  border-bottom: 1px solid var(--border-color);
-  background: var(--bg-color);
+  gap: 6px;
+  padding: 6px;
+  border-bottom: 1px solid var(--vc-border);
+  background: var(--vc-bg);
 }
 
 .element-panel__toolbar button {
-  padding: 6px 12px;
-  border: 1px solid var(--border-color);
-  background: var(--bg-color);
-  color: var(--text-color);
+  padding: 5px 10px;
+  border: 1px solid var(--vc-border);
+  background: var(--vc-bg);
+  color: var(--vc-text);
   border-radius: 4px;
-  cursor: pointer;
   font-size: 12px;
-}
-
-.element-panel__toolbar button:hover {
-  background: var(--hover-color);
 }
 
 .element-panel__tree {
   flex: 1;
   overflow-y: auto;
-  padding: 8px;
-  -webkit-overflow-scrolling: touch;
-  font-family: 'Courier New', monospace;
+  padding: 6px;
+  font-family: monospace;
   font-size: 12px;
 }
 
@@ -203,66 +194,55 @@ onMounted(() => {
   left: 0;
   right: 0;
   max-height: 50%;
-  background: var(--bg-color);
-  border-top: 2px solid var(--primary-color);
+  background: var(--vc-bg);
+  border-top: 2px solid var(--vc-primary);
   display: flex;
   flex-direction: column;
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .element-detail__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px;
-  border-bottom: 1px solid var(--border-color);
+  padding: 10px;
+  border-bottom: 1px solid var(--vc-border);
 }
 
 .element-detail__header h4 {
   margin: 0;
-  font-size: 14px;
-  color: var(--text-color);
+  font-size: 13px;
+  color: var(--vc-text);
 }
 
 .element-detail__header button {
   border: none;
   background: transparent;
   font-size: 18px;
-  cursor: pointer;
-  color: var(--text-color);
-  padding: 4px 8px;
+  color: var(--vc-text);
+  padding: 4px;
 }
 
 .element-detail__content {
   overflow-y: auto;
-  padding: 12px;
-  font-size: 13px;
-  -webkit-overflow-scrolling: touch;
+  padding: 10px;
+  font-size: 12px;
 }
 
 .element-detail__section {
-  margin-bottom: 12px;
-  line-height: 1.6;
+  margin-bottom: 10px;
+  line-height: 1.5;
 }
 
-.element-detail__text {
+.element-detail__text,
+.element-detail__attrs {
   margin-top: 4px;
-  padding: 8px;
-  background: var(--log-bg);
+  padding: 6px;
+  background: var(--vc-log-bg);
   border-radius: 4px;
   word-break: break-all;
 }
 
 .element-detail__attrs {
-  margin-top: 4px;
-  padding: 8px;
-  background: var(--log-bg);
-  border-radius: 4px;
-  font-family: 'Courier New', monospace;
-}
-
-.element-detail__attrs div {
-  margin-bottom: 4px;
-  color: var(--text-color);
+  font-family: monospace;
 }
 </style>

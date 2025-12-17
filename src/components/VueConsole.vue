@@ -1,51 +1,50 @@
 <template>
-  <Teleport :to="teleportTarget" :disabled="disableTeleport">
-    <div v-if="isInstalled" class="vue-console" :class="{ 'vue-console--dark': theme === 'dark' }">
-      <!-- 切换按钮 -->
-      <div
-        v-show="!isShow"
-        ref="switchBtn"
-        class="vue-console__switch"
-        :style="switchStyle"
-        @touchstart="handleTouchStart"
-        @touchmove="handleTouchMove"
-        @touchend="handleTouchEnd"
-        @click="show"
-      >
-        <span class="vue-console__switch-text">调试</span>
+  <!-- 自定义元素模式：不使用 Teleport，内容直接渲染到 Shadow DOM -->
+  <div v-if="isInstalled" class="vue-console" :class="{ 'vue-console--dark': theme === 'dark' }">
+    <!-- 切换按钮 -->
+    <div
+      v-show="!isShow"
+      ref="switchBtn"
+      class="vue-console__switch"
+      :style="switchStyle"
+      @touchstart="handleTouchStart"
+      @touchmove="handleTouchMove"
+      @touchend="handleTouchEnd"
+      @click="show"
+    >
+      <span class="vue-console__switch-text">调试</span>
+    </div>
+
+    <!-- 主面板 -->
+    <div v-show="isShow" class="vue-console__panel">
+      <!-- 头部 -->
+      <div class="vue-console__header">
+        <div class="vue-console__tabs">
+          <div
+            v-for="tab in tabs"
+            :key="tab.id"
+            class="vue-console__tab"
+            :class="{ 'vue-console__tab--active': activeTab === tab.id }"
+            @click="switchTab(tab.id)"
+          >
+            {{ tab.name }}
+          </div>
+        </div>
+        <button class="vue-console__close" @click="hide">✕</button>
       </div>
 
-      <!-- 主面板 -->
-      <div v-show="isShow" class="vue-console__panel">
-        <!-- 头部 -->
-        <div class="vue-console__header">
-          <div class="vue-console__tabs">
-            <div
-              v-for="tab in tabs"
-              :key="tab.id"
-              class="vue-console__tab"
-              :class="{ 'vue-console__tab--active': activeTab === tab.id }"
-              @click="switchTab(tab.id)"
-            >
-              {{ tab.name }}
-            </div>
-          </div>
-          <button class="vue-console__close" @click="hide">✕</button>
-        </div>
+      <!-- 内容区域 -->
+      <div class="vue-console__content">
+        <component :is="activeTabComponent" />
+      </div>
 
-        <!-- 内容区域 -->
-        <div class="vue-console__content">
-          <component :is="activeTabComponent" />
-        </div>
-
-        <!-- 工具栏 -->
-        <div class="vue-console__toolbar">
-          <button @click="toggleTheme">{{ theme === 'light' ? '🌙' : '☀️' }}</button>
-          <button @click="clearCurrentPanel">清空</button>
-        </div>
+      <!-- 工具栏 -->
+      <div class="vue-console__toolbar">
+        <button @click="toggleTheme">{{ theme === 'light' ? '🌙' : '☀️' }}</button>
+        <button @click="clearCurrentPanel">清空</button>
       </div>
     </div>
-  </Teleport>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -62,27 +61,11 @@ import { hookNetwork, clearNetwork } from '../core/network'
 const props = withDefaults(
   defineProps<{
     defaultTheme?: 'light' | 'dark'
-    target?: HTMLElement | null
   }>(),
   {
-    defaultTheme: 'light',
-    target: null
+    defaultTheme: 'light'
   }
 )
-
-// 计算teleport目标
-const teleportTarget = computed(() => {
-  // 如果提供了自定义target，使用该元素
-  if (props.target && props.target !== document.body) {
-    return props.target
-  }
-  return 'body'
-})
-
-// 当target是自定义元素时，禁用teleport（因为组件已经挂载在目标元素内）
-const disableTeleport = computed(() => {
-  return props.target !== null && props.target !== document.body
-})
 
 const isInstalled = ref(false)
 const isShow = ref(false)
@@ -115,6 +98,7 @@ let touchStartTime = 0
 
 function handleTouchStart(e: TouchEvent) {
   const touch = e.touches[0]
+  if (!touch) return
   touchStartX = touch.clientX
   touchStartY = touch.clientY
   touchStartTime = Date.now()
@@ -123,6 +107,7 @@ function handleTouchStart(e: TouchEvent) {
 function handleTouchMove(e: TouchEvent) {
   e.preventDefault()
   const touch = e.touches[0]
+  if (!touch) return
   const deltaX = touch.clientX - touchStartX
   const deltaY = touch.clientY - touchStartY
   
@@ -188,143 +173,111 @@ onMounted(() => {
 onBeforeUnmount(() => {
   unhookConsole()
 })
+
+// 暴露方法给自定义元素外部调用
+defineExpose({
+  show,
+  hide,
+  toggleTheme,
+  clearCurrentPanel
+})
 </script>
 
 <style scoped>
 .vue-console {
-  --primary-color: #42b983;
-  --bg-color: #ffffff;
-  --text-color: #2c3e50;
-  --border-color: #e0e0e0;
-  --hover-color: #f5f5f5;
-  --log-bg: #fafafa;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--text-color);
+  --vc-primary: #42b983;
+  --vc-bg: #fff;
+  --vc-text: #2c3e50;
+  --vc-border: #e0e0e0;
+  --vc-hover: #f0f0f0;
+  --vc-log-bg: #fafafa;
+  font: 14px system-ui, sans-serif;
+  color: var(--vc-text);
 }
-
 .vue-console--dark {
-  --bg-color: #1e1e1e;
-  --text-color: #d4d4d4;
-  --border-color: #3e3e3e;
-  --hover-color: #2d2d2d;
-  --log-bg: #252526;
+  --vc-bg: #1e1e1e;
+  --vc-text: #d4d4d4;
+  --vc-border: #3e3e3e;
+  --vc-hover: #2d2d2d;
+  --vc-log-bg: #252526;
 }
-
 .vue-console__switch {
   position: fixed;
-  right: 20px;
-  bottom: 20px;
-  width: 50px;
-  height: 50px;
+  right: 16px;
+  bottom: 16px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  background: var(--primary-color);
-  color: white;
+  background: var(--vc-primary);
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 6px rgba(0,0,0,.2);
   z-index: 10000;
-  user-select: none;
   touch-action: none;
 }
-
 .vue-console__switch-text {
   font-size: 12px;
   font-weight: bold;
   writing-mode: vertical-lr;
 }
-
 .vue-console__panel {
   position: fixed;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--bg-color);
+  inset: 0;
+  background: var(--vc-bg);
   z-index: 10001;
   display: flex;
   flex-direction: column;
 }
-
 .vue-console__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid var(--border-color);
-  background: var(--bg-color);
-  position: relative;
+  border-bottom: 1px solid var(--vc-border);
 }
-
 .vue-console__tabs {
   display: flex;
   flex: 1;
   overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
 }
-
-.vue-console__tabs::-webkit-scrollbar {
-  display: none;
-}
-
+.vue-console__tabs::-webkit-scrollbar { display: none; }
 .vue-console__tab {
-  padding: 12px 16px;
-  cursor: pointer;
+  padding: 10px 12px;
   white-space: nowrap;
-  user-select: none;
   border-bottom: 2px solid transparent;
-  color: var(--text-color);
-  opacity: 0.6;
-  transition: all 0.3s;
+  color: var(--vc-text);
+  opacity: .6;
 }
-
 .vue-console__tab--active {
   opacity: 1;
-  border-bottom-color: var(--primary-color);
+  border-bottom-color: var(--vc-primary);
   font-weight: bold;
 }
-
 .vue-console__close {
-  padding: 12px 16px;
+  padding: 10px 14px;
   border: none;
   background: transparent;
-  cursor: pointer;
   font-size: 20px;
-  color: var(--text-color);
-  opacity: 0.6;
+  color: var(--vc-text);
 }
-
-.vue-console__close:hover {
-  opacity: 1;
-}
-
 .vue-console__content {
   flex: 1;
   overflow: hidden;
-  background: var(--log-bg);
+  background: var(--vc-log-bg);
 }
-
 .vue-console__toolbar {
   display: flex;
   gap: 8px;
   padding: 8px;
-  border-top: 1px solid var(--border-color);
-  background: var(--bg-color);
+  border-top: 1px solid var(--vc-border);
 }
-
 .vue-console__toolbar button {
   padding: 6px 12px;
-  border: 1px solid var(--border-color);
-  background: var(--bg-color);
-  color: var(--text-color);
+  border: 1px solid var(--vc-border);
+  background: var(--vc-bg);
+  color: var(--vc-text);
   border-radius: 4px;
-  cursor: pointer;
   font-size: 12px;
-}
-
-.vue-console__toolbar button:hover {
-  background: var(--hover-color);
 }
 </style>
