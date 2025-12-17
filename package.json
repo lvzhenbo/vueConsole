@@ -18,7 +18,7 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build:lib": "vite build",
+    "build:lib": "tsdown && [ -f dist/index.mjs ] && mv dist/index.mjs dist/index.js || true",
     "build:types": "vue-tsc --declaration --emitDeclarationOnly --outDir dist",
     "build": "npm run build:lib && npm run build:types",
     "preview": "vite preview"
@@ -47,6 +47,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.1",
+    "tsdown": "^0.18.0",
     "typescript": "^5.7.2",
     "vite": "^6.0.3",
     "vue-tsc": "^2.2.0"
