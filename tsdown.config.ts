@@ -1,14 +1,13 @@
 import { defineConfig } from 'tsdown'
-import vue from '@vitejs/plugin-vue'
+import Vue from 'unplugin-vue/rolldown'
 
 export default defineConfig({
   entry: ['src/index.ts'],
   format: ['esm'],
-  dts: false, // Vue SFC 的类型定义需要使用 vue-tsc 单独生成
+  platform: 'neutral',
   clean: true,
   outDir: 'dist',
   external: ['vue'],
-  plugins: [
-    vue() as any
-  ]
+  plugins: [Vue({ isProduction: true })],
+  dts: { vue: true },
 })
