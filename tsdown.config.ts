@@ -7,7 +7,6 @@ export default defineConfig({
   platform: 'neutral',
   clean: true,
   outDir: 'dist',
-  external: ['vue'],
   plugins: [Vue({ isProduction: true })],
   dts: { vue: true },
 })
