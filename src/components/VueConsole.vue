@@ -49,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount, shallowRef } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import type { PanelConfig } from '../types'
 import LogPanel from '../panels/LogPanel.vue'
 import NetworkPanel from '../panels/NetworkPanel.vue'
@@ -91,11 +91,11 @@ const activeTab = ref('log')
 
 // 标签页配置
 const tabs: PanelConfig[] = [
-  { id: 'log', name: '日志', component: shallowRef(LogPanel) },
-  { id: 'system', name: '系统', component: shallowRef(SystemPanel) },
-  { id: 'network', name: '网络', component: shallowRef(NetworkPanel) },
-  { id: 'element', name: '元素', component: shallowRef(ElementPanel) },
-  { id: 'storage', name: '存储', component: shallowRef(StoragePanel) }
+  { id: 'log', name: '日志', component: LogPanel },
+  { id: 'system', name: '系统', component: SystemPanel },
+  { id: 'network', name: '网络', component: NetworkPanel },
+  { id: 'element', name: '元素', component: ElementPanel },
+  { id: 'storage', name: '存储', component: StoragePanel }
 ]
 
 const activeTabComponent = computed(() => {

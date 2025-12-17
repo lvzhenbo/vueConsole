@@ -19,7 +19,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsdown",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "preinstall": "npx only-allow pnpm"
   },
   "keywords": [
     "vue",
