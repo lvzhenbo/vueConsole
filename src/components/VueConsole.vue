@@ -1,5 +1,5 @@
 <template>
-  <Teleport to="body">
+  <Teleport :to="teleportTarget" :disabled="disableTeleport">
     <div v-if="isInstalled" class="vue-console" :class="{ 'vue-console--dark': theme === 'dark' }">
       <!-- 切换按钮 -->
       <div
@@ -62,11 +62,27 @@ import { hookNetwork, clearNetwork } from '../core/network'
 const props = withDefaults(
   defineProps<{
     defaultTheme?: 'light' | 'dark'
+    target?: HTMLElement | null
   }>(),
   {
-    defaultTheme: 'light'
+    defaultTheme: 'light',
+    target: null
   }
 )
+
+// 计算teleport目标
+const teleportTarget = computed(() => {
+  // 如果提供了自定义target，使用该元素
+  if (props.target && props.target !== document.body) {
+    return props.target
+  }
+  return 'body'
+})
+
+// 当target是自定义元素时，禁用teleport（因为组件已经挂载在目标元素内）
+const disableTeleport = computed(() => {
+  return props.target !== null && props.target !== document.body
+})
 
 const isInstalled = ref(false)
 const isShow = ref(false)

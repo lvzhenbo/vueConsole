@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 import App from './App.vue'
-import VConsole from './index'
+import VConsole from '../src/index'
 
 // 创建Vue应用
 const app = createApp(App)
