@@ -78,7 +78,7 @@ npm run build
 ```
 
 构建产物：
-- `dist/index.js` - ESM 格式的库文件
+- `dist/index.mjs` - ESM 格式的库文件
 - `dist/index.css` - 样式文件
 - `dist/index.d.ts` - TypeScript 类型定义
 

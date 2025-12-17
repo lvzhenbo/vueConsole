@@ -8,7 +8,7 @@
 - ✨ 实现基于 Vue 3.5 + TypeScript 的移动端调试工具
 - 🎨 支持亮色/暗色主题切换
 - 📱 可拖拽的悬浮按钮
-- 🔄 双打包机制：Vite 开发预览 + Vite 库打包（仅 ESM 格式）
+- 🔄 双打包机制：Vite 开发预览 + tsdown 库打包（仅 ESM 格式，输出 .mjs）
 
 #### 📋 日志面板
 - ✅ 捕获所有 console 方法（log、info、warn、error、debug）
