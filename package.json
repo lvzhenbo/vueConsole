@@ -1,0 +1,53 @@
+{
+  "name": "vue-console",
+  "version": "1.0.0",
+  "description": "基于Vue3.5+TypeScript的移动端调试工具",
+  "type": "module",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs"
+    },
+    "./style.css": "./dist/index.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "tsdown && vue-tsc --declaration --emitDeclarationOnly --outDir dist",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "vue",
+    "vue3",
+    "console",
+    "debug",
+    "mobile",
+    "vconsole",
+    "调试工具"
+  ],
+  "author": "lvzhenbo",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lvzhenbo/vueConsole.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lvzhenbo/vueConsole/issues"
+  },
+  "homepage": "https://github.com/lvzhenbo/vueConsole#readme",
+  "dependencies": {
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "tsdown": "^0.18.0",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.3",
+    "vue-tsc": "^2.2.0"
+  }
+}
