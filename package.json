@@ -42,8 +42,10 @@
   },
   "homepage": "https://github.com/lvzhenbo/vueConsole#readme",
   "devDependencies": {
+    "@tsconfig/node24": "^24.0.3",
     "@types/node": "^25.0.3",
     "@vitejs/plugin-vue": "^6.0.3",
+    "@vue/tsconfig": "^0.8.1",
     "tsdown": "^0.18.0",
     "typescript": "^5.9.3",
     "unplugin-vue": "^7.1.0",

@@ -8,5 +8,5 @@ export default defineConfig({
   clean: true,
   outDir: 'dist',
   plugins: [Vue({ isProduction: true })],
-  dts: { vue: true },
+  dts: { vue: true, tsconfig: 'tsconfig.app.json' },
 })
